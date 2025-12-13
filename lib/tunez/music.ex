@@ -17,4 +17,9 @@ defmodule Tunez.Music do
       define :destroy_album, action: :destroy
     end
   end
+
+  forms do
+    form :create_album, args: [:artist_id]
+  end
+
 end
