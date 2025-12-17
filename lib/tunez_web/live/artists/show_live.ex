@@ -143,7 +143,7 @@ defmodule TunezWeb.Artists.ShowLive do
   end
 
   def handle_event("destroy-artist", _params, socket) do
-    case Tunez.Music.destroy_artist!(socket.assigns.artist) do
+    case Tunez.Music.destroy_artist(socket.assigns.artist) do
       :ok ->
         socket =
           socket
