@@ -52,6 +52,7 @@ defmodule Tunez.Music.Artist do
         default ""
       end
       filter expr(contains(name, ^arg(:query)))
+      pagination offset?: true, default_limit: 12
     end
 
   end
