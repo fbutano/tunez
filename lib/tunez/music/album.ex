@@ -30,6 +30,13 @@ defmodule Tunez.Music.Album do
     update_timestamp :updated_at
   end
 
+  calculations do
+    calculate :years_ago, :integer, expr(2025 - year_released)
+    calculate :string_years_ago, :string,
+              expr("wow, this was released " <> years_ago <> " years ago!")
+  end
+
+
   actions do
     defaults [:read, :destroy]
     create :create do
