@@ -5,8 +5,15 @@ defmodule Tunez.Music.Artist do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshJsonApi.Resource]
 
+  resource do
+    description "A person or group of people thate makes music"
+  end
+
+
   json_api do
     type "artist"
+    includes [:albums]
+    derive_filter? false
   end
 
   postgres do
@@ -60,6 +67,7 @@ defmodule Tunez.Music.Artist do
   relationships do
     has_many :albums, Tunez.Music.Album do
       sort year_released: :desc
+      public? true
     end
   end
 
