@@ -1,7 +1,6 @@
 defmodule TunezWeb.Albums.FormLive do
   use TunezWeb, :live_view
 
-
   def mount(%{"id" => album_id}, _session, socket) do
     album = Tunez.Music.get_album_by_id!(album_id, load: [:artist])
     form = Tunez.Music.form_to_update_album(album)
@@ -14,6 +13,7 @@ defmodule TunezWeb.Albums.FormLive do
 
     {:ok, socket}
   end
+
   def mount(%{"artist_id" => artist_id}, _session, socket) do
     artist = Tunez.Music.get_artist_by_id!(artist_id)
     form = Tunez.Music.form_to_create_album(artist.id)
@@ -23,6 +23,7 @@ defmodule TunezWeb.Albums.FormLive do
       |> assign(:form, to_form(form))
       |> assign(:page_title, "New Album")
       |> assign(:artist, artist)
+
     {:ok, socket}
   end
 
@@ -121,6 +122,7 @@ defmodule TunezWeb.Albums.FormLive do
           socket
           |> put_flash(:info, "Album saved successfully")
           |> push_navigate(to: ~p"/artists/#{album.artist_id}")
+
         {:noreply, socket}
 
       {:error, form} ->
@@ -128,6 +130,7 @@ defmodule TunezWeb.Albums.FormLive do
           socket
           |> put_flash(:error, "Album not saved")
           |> assign(:form, form)
+
         {:noreply, socket}
     end
   end

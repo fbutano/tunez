@@ -15,7 +15,10 @@ defmodule TunezWeb.Artists.IndexLive do
     query_text = Map.get(params, "q", "")
     sort_by = Map.get(params, "sort_by") |> validate_sort_by()
     page_params = AshPhoenix.LiveView.page_from_params(params, 12)
-    page = Tunez.Music.search_artists!(query_text, page: page_params, query: [sort_input: sort_by])
+
+    page =
+      Tunez.Music.search_artists!(query_text, page: page_params, query: [sort_input: sort_by])
+
     socket =
       socket
       |> assign(:query_text, query_text)
@@ -31,8 +34,7 @@ defmodule TunezWeb.Artists.IndexLive do
       <.header responsive={false}>
         <.h1>Artists</.h1>
         <:action>
-          <.search_box query={@query_text} method="get"
-            data-role="artist-search" phx-change="search" />
+          <.search_box query={@query_text} method="get" data-role="artist-search" phx-change="search" />
         </:action>
         <:action>
           <.sort_changer selected={@sort_by} />
@@ -112,14 +114,21 @@ defmodule TunezWeb.Artists.IndexLive do
     ~H"""
     <div
       :if={AshPhoenix.LiveView.prev_page?(@page) || AshPhoenix.LiveView.next_page?(@page)}
-      class="flex justify-center pt-8 space-x-4">
-      <.button_link data-role="previous-page" kind="primary" inverse
+      class="flex justify-center pt-8 space-x-4"
+    >
+      <.button_link
+        data-role="previous-page"
+        kind="primary"
+        inverse
         patch={~p"/?#{query_string(@page, @query_text, @sort_by, "prev")}"}
         disabled={!AshPhoenix.LiveView.prev_page?(@page)}
       >
         « Previous
       </.button_link>
-      <.button_link data-role="next-page" kind="primary" inverse
+      <.button_link
+        data-role="next-page"
+        kind="primary"
+        inverse
         patch={~p"/?#{query_string(@page, @query_text, @sort_by, "next")}"}
         disabled={!AshPhoenix.LiveView.next_page?(@page)}
       >
@@ -219,5 +228,4 @@ defmodule TunezWeb.Artists.IndexLive do
     |> Keyword.put(:sort_by, sort_by)
     |> remove_empty()
   end
-
 end

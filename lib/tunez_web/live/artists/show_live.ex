@@ -10,8 +10,6 @@ defmodule TunezWeb.Artists.ShowLive do
   def handle_params(%{"id" => artist_id}, _url, socket) do
     artist = Tunez.Music.get_artist_by_id!(artist_id, load: [:albums])
 
-
-
     socket =
       socket
       |> assign(:artist, artist)
@@ -149,13 +147,16 @@ defmodule TunezWeb.Artists.ShowLive do
           socket
           |> put_flash(:info, "Artist deleted successfully")
           |> push_navigate(to: ~p"/")
+
         {:noreply, socket}
 
       {:error, error} ->
         Logger.info("Artist not deleted: #{socket.assigns.artist.id} - #{inspect(error)}")
+
         socket =
           socket
           |> put_flash(:error, "Artist not deleted")
+
         {:noreply, socket}
     end
   end
@@ -167,16 +168,20 @@ defmodule TunezWeb.Artists.ShowLive do
           socket
           |> update(:artist, fn artist ->
             Map.update!(artist, :albums, fn albums ->
-                Enum.reject(albums, &(&1.id == album_id))
-                end)
-              end)
+              Enum.reject(albums, &(&1.id == album_id))
+            end)
+          end)
           |> put_flash(:info, "Album deleted successfully")
+
         {:noreply, socket}
+
       {:error, error} ->
         Logger.info("Could not delete album '#{album_id}': #{inspect(error)}")
+
         socket =
           socket
           |> put_flash(:error, "Could not delete album")
+
         {:noreply, socket}
     end
   end
