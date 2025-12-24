@@ -2,13 +2,16 @@ defmodule TunezWeb.Albums.FormLive do
   use TunezWeb, :live_view
 
   def mount(%{"id" => album_id}, _session, socket) do
-    album = Tunez.Music.get_album_by_id!(album_id,
-      load: [:artist],
-      actor: socket.assigns.current_user
+    album =
+      Tunez.Music.get_album_by_id!(album_id,
+        load: [:artist, :tracks],
+        actor: socket.assigns.current_user
       )
-    form = Tunez.Music.form_to_update_album(album,
-      actor: socket.assigns.current_user
-    )
+
+    form =
+      Tunez.Music.form_to_update_album(album,
+        actor: socket.assigns.current_user
+      )
       |> AshPhoenix.Form.ensure_can_submit!()
 
     socket =
@@ -21,12 +24,15 @@ defmodule TunezWeb.Albums.FormLive do
   end
 
   def mount(%{"artist_id" => artist_id}, _session, socket) do
-    artist = Tunez.Music.get_artist_by_id!(artist_id,
-      actor: socket.assigns.current_user
-    )
-    form = Tunez.Music.form_to_create_album(artist.id,
-      actor: socket.assigns.current_user
-    )
+    artist =
+      Tunez.Music.get_artist_by_id!(artist_id,
+        actor: socket.assigns.current_user
+      )
+
+    form =
+      Tunez.Music.form_to_create_album(artist.id,
+        actor: socket.assigns.current_user
+      )
       |> AshPhoenix.Form.ensure_can_submit!()
 
     socket =
@@ -61,6 +67,8 @@ defmodule TunezWeb.Albums.FormLive do
           </div>
         </div>
         <.input field={form[:cover_image_url]} label="Cover Image URL" />
+
+        <.track_inputs form={form} />
 
         <:actions>
           <.button type="primary">Save</.button>
@@ -147,10 +155,21 @@ defmodule TunezWeb.Albums.FormLive do
   end
 
   def handle_event("add-track", _params, socket) do
+    socket =
+      update(socket, :form, fn form ->
+        order = length(AshPhoenix.Form.value(form, :tracks) || []) + 1
+        AshPhoenix.Form.add_form(form, :tracks)
+      end)
+
     {:noreply, socket}
   end
 
-  def handle_event("remove-track", %{"path" => _path}, socket) do
+  def handle_event("remove-track", %{"path" => path}, socket) do
+    socket =
+      update(socket, :form, fn form ->
+        AshPhoenix.Form.remove_form(form, path)
+      end)
+
     {:noreply, socket}
   end
 
