@@ -72,8 +72,13 @@ defmodule Tunez.Music.Album do
     belongs_to :artist, Tunez.Music.Artist do
       allow_nil? false
     end
+
     belongs_to :created_by, Tunez.Accounts.User
     belongs_to :updated_by, Tunez.Accounts.User
+
+    has_many :tracks, Tunez.Music.Track do
+      sort order: :asc
+    end
   end
 
   def next_year, do: Date.utc_today().year + 1
@@ -110,12 +115,7 @@ defmodule Tunez.Music.Album do
     end
 
     policy action_type([:update, :destroy]) do
-      authorize_if expr(
-        ^actor(:role) == :editor and created_by_id == ^actor(:id)
-      )
+      authorize_if expr(^actor(:role) == :editor and created_by_id == ^actor(:id))
     end
-
   end
-
-
 end
